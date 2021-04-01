@@ -45,6 +45,7 @@ class motor:
         self.start_pos = result.values[moteus.Register.POSITION]
         print(self.start_pos)
 
+
 async def main():
     print("Reading and printing wrapped motor positions...")
     test_motor = motor()
