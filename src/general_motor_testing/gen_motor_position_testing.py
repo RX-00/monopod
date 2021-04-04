@@ -29,10 +29,9 @@ MIN_POS_W_KN = -0.5  # same as 0.50
 MID_POS_W_KN = -0.25 # same as 0.75
 
 class Servo:
-    def __init__(self, transport, id):
+    def __init__(self, id): # NOTE: instantiate your own transport instance when using rpi CAN-FD interface
         self.id = id
-        self.transport = transport
-        self.controller = moteus.Controller(id = id, transport = transport)
+        self.controller = moteus.Controller(id = id)
         self.stream = moteus.Stream(self.controller) # allows python file-like interface to the diagnostic stream of a moteus controller
         # NOTE: TODO: perhaps force set_limits in the constructor function
 
@@ -121,11 +120,13 @@ class Servo:
 async def main():
     print("Starting Motors...")
     print("Testing hip pitch motor...")
-    hp_joint = Servo(transport, 1) # currently no need for transport until rpi integration?
+    hp_joint = Servo(1) # currently no need for transport until rpi integration?
 
     # TODO: TEST IF SET_CONFIGS DOES WRAPPED OR UNWRAPPED POSITIONS
-    await hp_joint.set_configs(MIN_POS_W, MAX_POS_W, 1, 0)
+    await hp_joint.set_configs(MIN_POS_W_HP, MAX_POS_W_HP, 1, 0)
+    print("configs set!")
 
+    # some issues here...
     await hp_joint.move_to_max_pos()
     await asyncio.sleep(1.5)
     await hp_joint.move_to_mid_pos()

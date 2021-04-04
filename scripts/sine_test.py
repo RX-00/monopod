@@ -31,9 +31,10 @@ async def sine_wave():
 
 async def one_full_rotation():
     c = moteus.Controller()
+    stream = moteus.Stream(c)
 
     for i in range(500):
-        print(await c.set_position(position = abs(0.9999 * math.sin(math.pi*i/500)), query = True))
+        (await c.set_position(position = abs(0.9999 * math.sin(math.pi*i/500)), query = True))
         await asyncio.sleep(0.001)
 
     print(await c.set_stop(query = True))    # in case there was a fault
