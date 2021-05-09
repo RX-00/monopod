@@ -225,4 +225,4 @@ async def main_kn_joint_test():
 
 
 if __name__ == '__main__':
-    asyncio.run(main_kn_joint_test())
+    asyncio.run(main_hp_joint_test())
