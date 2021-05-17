@@ -6,7 +6,7 @@ TODO:
     - create a make file for lcm
 - maybe as the project evolves, use catkin to manage and build the project
 - ADD AN ENCODER TO KNEE AND USE NEW FIRMWARE FEATURE ON MOTEUS CONTROLLER FOR REDUCTION UP GEAR RATIO
-
+- set servo.position_min/max for moteus on lower level using command line tools or python diagnostic stream
 
 
 BOM leg:
