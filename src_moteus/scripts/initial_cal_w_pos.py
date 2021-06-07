@@ -115,16 +115,44 @@ class Servo:
             await self.set_min_pos(pos_val)
         if min_or_max == "max":
             await self.set_max_pos(pos_val)
+        print("motor limit has been saved")
 
 
 async def main():
     print("Starting motor calibrations...")
+
+    # Servo 1 calibration ============================================
     servo1 = Servo(1)
     print("clearing any faults by sending stop command...")
     await servo1.stop()
 
     min_or_max = "min"
     await obtain_cal_pos_limit(servo1, min_or_max)
+    min_or_max = "max"
+    await obtain_cal_pos_limit(servo1, min_or_max)
+
+    await servo1.set_configs(1, 0)
+    await servo1.stop()
+
+
+    # Servo 2 calibration ============================================
+    servo2 = Servo(2)
+    print("Clearing any faults by sending stop command...")
+    await servo2.stop()
+
+    min_or_max = "min"
+    await obtain_cal_pos_limit(servo2, min_or_max)
+    min_or_max = "max"
+    await obtain_cal_pos_limit(servo2, min_or_max)
+
+    await servo2.set_configs(1, 0)
+    await servo2.stop()
+
+
+    print("Servo calibrations have been set and saved! \n
+           exiting program...")
+    sys.exit("See ya!")
+
 
 
 if __name__ == '__main__':
