@@ -66,11 +66,14 @@ class Servo:
     async def flush_read(self): # to flush out the past command(s) on the moteus
         await self.stream.flush_read()
 
-    async def print_unwrapped_position(self):
+    async def print_unwrapped_position(self, oneLine):
         result = None
         while result is None:
             result = await self.controller.query()
-        print(result.values[moteus.Register.POSITION])
+        if oneLine:
+            print(result.values[moteus.Register.POSITION], end='\r')
+        elif not oneLine:
+            print(result.values[moteus.Register.POSITION])
 
     async def stop(self):
         # stops the motor and turns off power sent to the coils
@@ -99,14 +102,17 @@ class Servo:
 
     async def obtain_cal_pos_limit(self, min_or_max):
         pos_val = 0
+        trigger = True
         print("please move motor to the " + min_or_max + "position limit")
-        print("press [] key when you get around the pos val you want")
-        # TODO: MAKE IT REFRESH AND PRINT on ONE LINE
-        # TODO: loop here until a key is pressed
-        {
-            await self.print_unwrapped_position()
-            pos_val = await self.read_unwrapped_position()
-        }
+        print("press [q] key when you get around the pos val you want")
+        while trigger:
+            try:
+                await self.print_unwrapped_position(True)
+                pos_val = await self.read_unwrapped_position()
+            except:
+                trigger = false
+        print(min_or_max, " position has been set as pos_val!")
+
         { # if key is pressed then set the min or max position
             print("now setting the " + min_or_max + "limit")
 
@@ -149,8 +155,7 @@ async def main():
     await servo2.stop()
 
 
-    print("Servo calibrations have been set and saved! \n
-           exiting program...")
+    print("Servo calibrations have been set and saved! \n exiting program...")
     sys.exit("See ya!")
 
 
