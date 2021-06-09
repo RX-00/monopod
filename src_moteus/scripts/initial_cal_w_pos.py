@@ -36,7 +36,7 @@ class Servo:
         self.controller = moteus.Controller(id = id)
         self.stream = moteus.Stream(self.controller) # moteus diagnostic stream, do NOT use for real time
 
-    async def read_unwrapped_position_stream(self): # not good for real time
+    async def read_stream_pos(self): # not good for real time
         servo_stats = await self.stream.read_data("servo_stats")
         return servo_stats.unwrapped_position
 
@@ -79,6 +79,15 @@ class Servo:
         # stops the motor and turns off power sent to the coils
         await self.controller.set_stop()
 
+    # NOTE: from mjbots/quad/.../zero_leg.py for reference
+    async def zero_offset(self):
+        servo_stats = await self.stream.read_data("servo_stats")
+        position_raw = servo_stats.position_raw
+        await self.stream.command(
+            f"conf set motor.position_offset {-position_raw:d}".encode('latin1'))
+        await self.stream.command("conf write".encode('latin1'))
+        await self.stream.command("d rezero".encode('latin1'))
+
     # NOTE: pid_pos_ki should be set to 0 for high torque bandwidth mode
     # NOTE: unw_pos_scale should be 1 if no gearbox reduction or multiplier
     async def set_configs(self, unw_pos_scale, pid_pos_ki):
@@ -90,7 +99,7 @@ class Servo:
 
         cmd_str = "conf set motor.unwrapped_position_scale " + str(unw_pos_scale)
 
-        # No firmware min/max position bounds due to the fault it results in during runtime
+        # NOTE: No firmware min/max position bounds due to the fault it results in during runtime
         await self.stream.command(cmd_str.encode('latin1'))
         await self.stream.command("conf set servo.pid_position.ki {pid_pos_ki:.5f}".encode('latin1'))
 
