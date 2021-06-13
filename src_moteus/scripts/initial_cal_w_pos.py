@@ -94,8 +94,9 @@ class Servo:
         servo_stats = await self.stream.read_data("servo_stats")
         print(servo_stats.unwrapped_position)
         self.curr_pos = servo_stats.unwrapped_position
-        self.min_pos = min_pos
-        self.max_pos = max_pos
+
+        print("This is your min_pos value: ", self.min_pos)
+        print("This is your max_pos value: ", self.max_pos)
 
         cmd_str = "conf set motor.unwrapped_position_scale " + str(unw_pos_scale)
 
@@ -111,21 +112,19 @@ class Servo:
 
     async def obtain_cal_pos_limit(self, min_or_max):
         pos_val = 0
-        trigger = True
-        print("please move motor to the " + min_or_max + "position limit")
-        print("press [q] key when you get around the pos val you want")
-        while trigger:
-            try:
-                await self.print_unwrapped_position(True)
-                pos_val = await self.read_unwrapped_position()
-            except:
-                trigger = false
-        print(min_or_max, " position has been set as pos_val!")
+        print("please move motor to the " + min_or_max + " position limit")
+        print("press [q] to set or any other key to continue")
+        while True:
+            await self.print_unwrapped_position(True)
+            pos_val = await self.read_unwrapped_position()
+            n = input()
+            if n == 'q':
+                break
 
-        { # if key is pressed then set the min or max position
-            print("now setting the " + min_or_max + "limit")
 
-        }
+        print(min_or_max, " position has been set as: ", pos_val)
+        print("now setting the " + min_or_max + " limit")
+
         if min_or_max == "min":
             await self.set_min_pos(pos_val)
         if min_or_max == "max":
@@ -142,23 +141,24 @@ async def main():
     await servo1.stop()
 
     min_or_max = "min"
-    await obtain_cal_pos_limit(servo1, min_or_max)
+    await servo1.obtain_cal_pos_limit(min_or_max)
     min_or_max = "max"
-    await obtain_cal_pos_limit(servo1, min_or_max)
+    await servo1.obtain_cal_pos_limit(min_or_max)
 
     await servo1.set_configs(1, 0)
     await servo1.stop()
 
 
     # Servo 2 calibration ============================================
+    print("\n\n\n Next servo calibration...")
     servo2 = Servo(2)
     print("Clearing any faults by sending stop command...")
     await servo2.stop()
 
     min_or_max = "min"
-    await obtain_cal_pos_limit(servo2, min_or_max)
+    await servo2.obtain_cal_pos_limit(min_or_max)
     min_or_max = "max"
-    await obtain_cal_pos_limit(servo2, min_or_max)
+    await servo2.obtain_cal_pos_limit(min_or_max)
 
     await servo2.set_configs(1, 0)
     await servo2.stop()
