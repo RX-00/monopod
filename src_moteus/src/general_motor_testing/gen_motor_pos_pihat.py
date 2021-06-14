@@ -21,6 +21,11 @@ TODO:
 now that conf's have been set through moteus tview, now get some tests with
 the transport for moteus_pi3hat.Pi3HatRouter working
 
+SERVO 1 IS KNEE
+SERVO 2 IS HIP
+
+TODO: CHANGE THE PROGRAM SO THAT 1 IS KNEE AND 2 IS HIP
+
 
 '''
 
@@ -33,6 +38,9 @@ KNEE servopos.position_max = -0.15
 HIP servopos.position_min = -0.51
 HIP servopos.position_max = +0.02
 '''
+
+MIN_POS_HP = -0.51
+MIN_POS_KN = -0.65
 
 
 
@@ -91,7 +99,7 @@ async def main():
                 position = math.nan,
                 velocity = 2.0,
                 maximum_torque = 2.0,
-                stop_position = MIN_POS_HP,
+                stop_position = MIN_POS_HP + 1,
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
@@ -99,7 +107,7 @@ async def main():
                 position = math.nan,
                 velocity = 2.0,
                 maximum_torque = 2.0,
-                stop_position = MIN_POS_KN,
+                stop_position = 1,
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
@@ -109,7 +117,7 @@ async def main():
         # can send out commands and retrieve responses simultaneously
         # from all ports. It can also pipeline commands and responses
         # for multiple servos on the same bus
-        results = await transport.cycle(commands_sinusoidal)
+        results = await transport.cycle(commands_pos)
 
         # The result is a list of 'moteus.Result' types, each of which
         # identifies the servo it came from, and has a 'values' field
@@ -125,7 +133,7 @@ async def main():
             f"{result.values[moteus.Register.POSITION]} " +
             f"{result.values[moteus.Register.VELOCITY]}"
             for result in results
-        ))
+        ), end='\r')
 
         # We will wait 20ms between cycles. By default, each servo has
         # a watchdog timeout, where if no CAN command is received for
