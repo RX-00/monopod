@@ -1,5 +1,23 @@
 #!/usr/bin/python3 -B
 
+
+'''
+DECAP NOTE:
+
+This script is now dead since I have noticed that the stream class and functions
+are not the most reliable as compared to manually setting the moteus conf's
+through tview
+
+note to self: don't forget to conf set and then conf write to save configs perm
+
+
+'''
+
+
+
+
+
+
 # Python script to calibrate and set configurable parameters
 # position_min/max along with printing out the current read
 # positions of the motors for the monopod

@@ -15,26 +15,24 @@ import argparse
 import sys
 
 
-# DON'T NEED ANY OF THIS ANYMORE AFTER ACTUALLY WRITING CALIBRATION FOR
-# SAVED MAX/MIN POSITIONS
+'''
+TODO:
 
-POS_OFFSET = 0.0005
+now that conf's have been set through moteus tview, now get some tests with
+the transport for moteus_pi3hat.Pi3HatRouter working
 
-# unwrapped pos with neg
-MAX_POS_HP = 0.00  # same as 1.00
-MIN_POS_HP = -0.5  # same as 0.50
-MID_POS_HP = -0.25 # same as 0.75
 
-MAX_POS_HP_SOFT_STOP = MAX_POS_HP + POS_OFFSET
-MIN_POS_HP_SOFT_STOP = MIN_POS_HP - POS_OFFSET
+'''
 
-MAX_POS_KN = 0.45
-MIN_POS_KN = 0.16
-MID_POS_KN = (MAX_POS_KN + MIN_POS_KN) / 2
 
-MAX_POS_KN_SOFT_STOP = MAX_POS_KN + POS_OFFSET
-MIN_POS_KN_SOFT_STOP = MIN_POS_KN + POS_OFFSET
+'''
+NOTE:
+KNEE servopos.position_min = -0.65
+KNEE servopos.position_max = -0.15
 
+HIP servopos.position_min = -0.51
+HIP servopos.position_max = +0.02
+'''
 
 
 
