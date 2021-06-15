@@ -18,14 +18,12 @@ import sys
 '''
 TODO:
 
-now that conf's have been set through moteus tview, now get some tests with
-the transport for moteus_pi3hat.Pi3HatRouter working
+Figure out why the second motor (the hip) does not get sent its commands
+and why it doesn't show up in the returned results list
 
-SERVO 1 IS KNEE
-SERVO 2 IS HIP
-
-TODO: CHANGE THE PROGRAM SO THAT 1 IS KNEE AND 2 IS HIP
-
+1. Compare with the og moteus pi_hat example code that was used as reference
+   to write this
+2. Ask Josh on Discord if you can't figure it out
 
 '''
 
@@ -40,11 +38,11 @@ HIP servopos.position_max = +0.02
 '''
 
 
-MAX_POS_KN = -0.15 - 0.01
-MIN_POS_KN = -0.65 + 0.01
+MAX_POS_KN = -0.15 - 0.00
+MIN_POS_KN = -0.65 + 0.00
 
-MAX_POS_HP =  0.02 - 0.01
-MIN_POS_HP = -0.51 + 0.01
+MAX_POS_HP =  0.02 - 0.00
+MIN_POS_HP = -0.51 + 0.00
 
 
 async def main():
@@ -91,11 +89,19 @@ async def main():
         commands_sinusoidal = [
             servos[1].make_position( # KNEE
                 position = math.nan,
-                velocity = MIN_POS_KN + half_kn + math.sin(now) * half_kn,
+                velocity = 0.5,
+                maximum_torque = 2.0,
+                stop_position = MIN_POS_KN + half_kn + math.sin(now) * half_kn,
+                feedforward_torque = -0.01,
+                watchdog_timeout = math.nan,
                 query = True),
             servos[2].make_position( # HIP
                 position = math.nan,
-                velocity = MIN_POS_HP + half_hp + math.sin(now + 1) * half_hp,
+                velocity = 0.5,
+                maximum_torque = 2.0,
+                stop_position = MIN_POS_HP + half_hp + math.sin(now + 1) * half_hp,
+                feedforward_torque = -0.01,
+                watchdog_timeout = math.nan,
                 query = True),
         ]
 
@@ -105,7 +111,7 @@ async def main():
                 position = math.nan,
                 velocity = 2.0,
                 maximum_torque = 2.0,
-                stop_position = MIN_POS_KN,
+                stop_position = MAX_POS_KN,
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
@@ -113,7 +119,7 @@ async def main():
                 position = math.nan,
                 velocity = 2.0,
                 maximum_torque = 2.0,
-                stop_position = MIN_POS_HP,
+                stop_position = MAX_POS_HP,
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
@@ -123,6 +129,7 @@ async def main():
         # can send out commands and retrieve responses simultaneously
         # from all ports. It can also pipeline commands and responses
         # for multiple servos on the same bus
+        #results = await transport.cycle(commands_sinusoidal)
         results = await transport.cycle(commands_sinusoidal)
 
         # The result is a list of 'moteus.Result' types, each of which
@@ -139,7 +146,7 @@ async def main():
             f"{result.values[moteus.Register.POSITION]} " +
             f"{result.values[moteus.Register.VELOCITY]}"
             for result in results
-        ), end='\r')
+        ))
 
         # We will wait 20ms between cycles. By default, each servo has
         # a watchdog timeout, where if no CAN command is received for
