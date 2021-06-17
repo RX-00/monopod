@@ -63,7 +63,7 @@ async def main():
     # syntax is a python "dictionary comprehension"
     servos = {
         servo_id : moteus.Controller(id = servo_id, transport=transport)
-        for servo_id in [1, 2]
+        for servo_id in [1, 2, 3, 4]
     }
 
     # We will start by sending a 'stop' to all servos, in the event that any had a fault
@@ -141,12 +141,12 @@ async def main():
         #
         # Here, we'll just print the ID, position, and velocity of each
         # servo for which a reply was returned
-        print(", ".join(
+        print("\n".join(
             f"({result.id}) " +
             f"{result.values[moteus.Register.POSITION]} " +
-            f"{result.values[moteus.Register.VELOCITY]}"
+            f"{result.values[moteus.Register.VELOCITY]} "
             for result in results
-        ))
+        ), end='\r')
 
         # We will wait 20ms between cycles. By default, each servo has
         # a watchdog timeout, where if no CAN command is received for
