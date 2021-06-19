@@ -29,12 +29,16 @@ Figure out how to make the spring jumping up and down virtual leg
 
 
 '''
-NOTE:
+NOTE: On the moteus controller these are the set position_min/max
+
 KNEE servopos.position_min = -0.65
 KNEE servopos.position_max = -0.15
 
 HIP servopos.position_min = -0.51
 HIP servopos.position_max = +0.02
+
+KNEE id.id = 1
+HIP  id.id = 2
 '''
 
 
@@ -47,18 +51,135 @@ MIN_POS_HP = -0.51 + 0.00
 
 
 
-
 class Leg:
-    def __init__(self, id):
-        self.
+    # each arg corresponds to the respective servo CANBUS ID
+    def __init__(self, knee, hip_pitch):
+        self.knee = knee
+        self.hip_pitch = hip_pitch
 
-    async def do_foo(self):
-        return False;
+        # servo_bus_map arg describes which IDs are found on which bus
+        self.transport = moteus_pi3hat.Pi3HatRouter(
+            servo_bus_map = {
+                1:[knee],
+                2:[hip_pitch],
+            },
+        )
+
+        # create a moteus.Controller instance for each servo
+        self.servos = {
+            servo_id : moteus.Controller(id = servo_id, transport=self.transport)
+            for servo_id in [1, 2] # number of motors, need to change manually
+        }
+
+        # commands for the motors, default set to mid values
+        self.commands = [
+            self.servos[knee].make_position(
+                position = math.nan,
+                velocity = 0.5,
+                maximum_torque = 2.0,
+                stop_position = (MAX_POS_KN - MIN_POS_KN) / 2,
+                feedforward_torque = -0.01,
+                watchdog_timeout = math.nan,
+                query = True),
+            self.servos[hip_pitch].make_position(
+                position = math.nan,
+                velocity = 0.5,
+                maximum_torque = 2.0,
+                stop_position = (MAX_POS_HP - MIN_POS_HP) / 2,
+                feedforward_torque = -0.01,
+                watchdog_timeout = math.nan,
+                query = True),
+        ]
+
+
+    # send stop to clear faults && disable all the motors
+    async def stop_all_motors(self):
+        await self.transport.cycle([n.make_stop() for n in self.servos.values()])
+
+
+    # set knee motor commands
+    # TODO: check if you can call commands and see the info about
+    #       each servo in servos
+    async def set_motor_kn_cmds(self, pos, vel, max_torq, stop_pos, ffwd_torq, watchdog_timeout, que):
+        self.servos[self.knee].make_position(
+            position = pos,
+            velocity = vel,
+            maximum_torque = max_torq,
+            stop_position = stop_pos,
+            feedforward_torque = ffwd_torq,
+            watchdog_timeout = watchdog_timeout,
+            query = que),
+
+
+    # set hip motor commands
+    # TODO: check if you can call commands and see the info about
+    #       each servo in servos
+    async def set_motor_hp_cmds(self, pos, vel, max_torq, stop_pos, ffwd_torq, watchdog_timeout, que):
+        self.servos[self.hip_pitch].make_position(
+            position = pos,
+            velocity = vel,
+            maximum_torque = max_torq,
+            stop_position = stop_pos,
+            feedforward_torque = ffwd_torq,
+            watchdog_timeout = watchdog_timeout,
+            query = que),
+
+
+    # send commands and return the results info
+    async def send_motor_cmds(self):
+        results = await self.transport.cycle(self.commands)
+        return results
+
 
 
 
 async def main():
     print("Starting jumping...")
+    now = time.time()
+    monopod = Leg(1, 2)
+
+    # halfway position of each motorized joint
+    kn_half = (MAX_POS_KN - MIN_POS_KN) / 2
+    hp_half = (MAX_POS_HP - MIN_POS_HP) / 2
+
+    # clearing any faults
+    await monopod.stop_all_motors()
+
+    # testing the set commands
+    await monopod.set_motor_kn_cmds(math.nan, 0.5, 2.0, kn_half, -0.01, math.nan, True)
+    await monopod.set_motor_hp_cmds(math.nan, 0.5, 2.0, hp_half, -0.01, math.nan, True)
+
+    # test if self.commands was set correctly
+    print(monopod.commands)
+
+    sys.exit("terminating before sending commands")
+
+
+
+    # test sending the commands
+    results = await monopod.send_motor_cmds()
+
+    # The result is a list of 'moteus.Result' types, each of which
+    # identifies the servo it came from, and has a 'values' field
+    # that allows access to individual register results.
+    #
+    # NOTE: it is possible to not receive responses from all servos
+    #       for which a query was requested
+    #
+    # Here, we'll just print the ID, position, and velocity of each
+    # servo for which a reply was returned
+    print("\n".join(
+        f"({result.id}) " +
+        f"{result.values[moteus.Register.POSITION]} " +
+        f"{result.values[moteus.Register.VELOCITY]} "
+        for result in results
+    ), end='\r')
+
+
+    # We will wait 20ms between cycles. By default, each servo has
+    # a watchdog timeout, where if no CAN command is received for
+    # 100mc the controller will enter a latched fault state
+    await asyncio.sleep(0.02)
 
 
 
