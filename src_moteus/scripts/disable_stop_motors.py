@@ -1,10 +1,6 @@
 #!/usr/bin/python3 -B
 
-# general motor testing of moving hip (hp) & knee (kn) joints of simple
-# monopod robot through the moteus controller and the moteus pi3hat
-#
-# This commands multiple servos connected to a pi3hat. It uses the cycle()
-# method in order to optimally use the pi3hat bandwidth
+# stop command sent to motors thus disabling the motors
 
 import asyncio
 import math
@@ -13,20 +9,6 @@ import moteus_pi3hat
 import time
 import argparse
 import sys
-
-
-'''
-TODO:
-
-Make a class that defines each leg (extendable to 4 servos)
-
-Figure out how to make the spring jumping up and down virtual leg
-1. get the measurements for the leg links
-2. figure out the lowest possible length of the virtual leg spring
-3. then figure out the IK that needs to be mapped to the input positions of the servos
-
-'''
-
 
 '''
 NOTE:
@@ -70,7 +52,7 @@ async def main():
     await transport.cycle([x.make_stop() for x in servos.values()])
     print("sent stop cmd to clear any motor faults")
 
-    while True:
+    while False:
         # the 'cycle' method accepts a list of commands, each of which is created by
         # calling one of the 'make_foo' methods on Controller. The most command thing
         # will be the 'make_position' method
