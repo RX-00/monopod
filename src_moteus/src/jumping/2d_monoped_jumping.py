@@ -18,10 +18,7 @@ import sys
 '''
 TODO:
 
-Figure out how to update the self.commands var w/o overwriting
-
-[DONE] Figure out why the Legs Class commands dictionary doesn't update with each cycle
-&& only stays as the initial value from __init__()
+REDO THIS WHOLE GODDAMN THING TO BE MORE LIKE ZERO_LEG.PY
 
 Figure out how to make the spring jumping up and down virtual leg
 1. get the measurements for the leg links
