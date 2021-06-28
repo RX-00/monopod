@@ -24,6 +24,7 @@ Figure out how to make the spring jumping up and down virtual leg
 1. get the measurements for the leg links
 2. figure out the lowest possible length of the virtual leg spring
 3. then figure out the IK that needs to be mapped to the input positions of the servos
+   (This will be implemented as a cpp ctrlr that will interface with this py class)
 
 '''
 
