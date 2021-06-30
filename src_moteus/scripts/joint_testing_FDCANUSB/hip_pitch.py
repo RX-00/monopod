@@ -17,8 +17,8 @@ import time
 import argparse
 import sys
 
-MAX_POS = 1.00
-MIN_POS = 0.50
+MAX_POS = 0.02
+MIN_POS = -0.51
 MID_POS = (MAX_POS + MIN_POS) / 2.0
 
 # NOTE: ALWAYS USE THE WRAPPED POSITIONS FOR HIP PITCH MOTOR
@@ -35,8 +35,8 @@ class hip_pitch:
         qr = moteus.QueryResolution()
 
         # hp_motor = hip pitch motor
-        self.hp_motor = moteus.Controller(id = 1)
-        self.pos_tolerance = 0.05
+        self.hp_motor = moteus.Controller(id = 2)
+        self.pos_tolerance = 0.00
 
 
     async def stop(self):
@@ -45,7 +45,7 @@ class hip_pitch:
 
     async def init(self):
         await self.stop() # stops all the motors (but in this case it's just hp for now)
-        await self.starting_pos_check()
+        #await self.starting_pos_check()
 
     async def starting_pos_check(self):
         while True:

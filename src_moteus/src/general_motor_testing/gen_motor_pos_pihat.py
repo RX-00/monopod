@@ -129,8 +129,8 @@ async def main():
         # can send out commands and retrieve responses simultaneously
         # from all ports. It can also pipeline commands and responses
         # for multiple servos on the same bus
-        #results = await transport.cycle(commands_sinusoidal)
         results = await transport.cycle(commands_sinusoidal)
+        #results = await transport.cycle(commands_pos)
 
         # The result is a list of 'moteus.Result' types, each of which
         # identifies the servo it came from, and has a 'values' field
@@ -141,13 +141,13 @@ async def main():
         #
         # Here, we'll just print the ID, position, and velocity of each
         # servo for which a reply was returned
-        #print("\n".join(
-        #    f"({result.id}) " +
-        #    f"{result.values[moteus.Register.POSITION]} " +
-        #    f"{result.values[moteus.Register.VELOCITY]} "
-        #    for result in results
-        #), end='\r')
-        print(now, end='\r')
+        print("\n".join(
+            f"({result.id}) " +
+            f"{result.values[moteus.Register.POSITION]} " +
+            f"{result.values[moteus.Register.VELOCITY]} "
+            for result in results
+        ), end='\r')
+        #print(now, end='\r')
 
         # We will wait 20ms between cycles. By default, each servo has
         # a watchdog timeout, where if no CAN command is received for

@@ -1,6 +1,12 @@
 # monopod
 WIP 2D monopod
 
+NOTE:
+ - if the knee motor is not working despite no changes in hw and sw then do:
+   1. complete power cycle
+   2. run the move knee script
+   3. retry
+
 TODO:
 - test out lcm py and cpp
     - create a make file for lcm

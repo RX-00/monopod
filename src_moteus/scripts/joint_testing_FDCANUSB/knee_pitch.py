@@ -21,9 +21,9 @@ import sys
 
 # NOTE: ALWAYS USE THE WRAPPED POSITIONS FOR KNEE PITCH MOTOR
 # wrapped pos with neg
-MAX_POS_W = 0.00  # same as 1.00
-MIN_POS_W = -0.5  # same as 0.50
-MID_POS_W = -0.25 # same as 0.75
+MAX_POS_W = -0.15  # same as 1.00
+MIN_POS_W = -0.65  # same as 0.50
+MID_POS_W = (MAX_POS_W - MIN_POS_W) / 2.0 # same as 0.75
 
 class knee_pitch:
     def __init__(self):
@@ -34,7 +34,7 @@ class knee_pitch:
 
         # kn_motor = knee pitch motor
         self.kn_motor = moteus.Controller(id = 1)
-        self.pos_tolerance = 0.05
+        self.pos_tolerance = 0.0
 
 
     async def stop(self):
@@ -43,7 +43,7 @@ class knee_pitch:
 
     async def init(self):
         await self.stop() # stops all the motors (but in this case it's just kn for now)
-        await self.starting_pos_check()
+        #await self.starting_pos_check()
 
     async def starting_pos_check(self):
         while True:

@@ -20,7 +20,7 @@ import sys
 '''
 TODO:
 
-REDO THIS WHOLE GODDAMN THING TO BE MORE LIKE ZERO_LEG.PY
+Just rewrite this to be more like gen_motor_pos_pihat.py
 
 Figure out how to make the spring jumping up and down virtual leg
 1. get the measurements for the leg links
@@ -137,7 +137,7 @@ async def main():
     servos = [Servo(transport, x) for x in servo_ids]
 
     # We will start by sending a 'stop' to all servos, in the event that any had a fault
-    await transport.cycle([await x.stop() for x in servos])
+    #await transport.cycle()
     print("sent stop cmd to clear any motor faults")
 
     half_kn = (MAX_POS_KN - MIN_POS_KN) / 2
@@ -158,7 +158,7 @@ async def main():
         # to each of the available position mode registers in the moteus
         # reference manual
         commands_sinusoidal = [
-            servos[1].make_position( # KNEE
+            servos[1].controller.make_position( # KNEE
                 position = math.nan,
                 velocity = 0.5,
                 maximum_torque = 2.0,
@@ -166,7 +166,7 @@ async def main():
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
-            servos[2].make_position( # HIP
+            servos[2].controller.make_position( # HIP
                 position = math.nan,
                 velocity = 0.5,
                 maximum_torque = 2.0,
@@ -178,7 +178,7 @@ async def main():
 
         # position commands
         commands_pos = [
-            servos[1].make_position( # KNEE
+            servos[1].controller.make_position( # KNEE
                 position = math.nan,
                 velocity = 2.0,
                 maximum_torque = 2.0,
@@ -186,7 +186,7 @@ async def main():
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
-            servos[2].make_position( # HIP
+            servos[2].controller.make_position( # HIP
                 position = math.nan,
                 velocity = 2.0,
                 maximum_torque = 2.0,

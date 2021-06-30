@@ -159,8 +159,8 @@ async def main():
         await monopod.set_motor_kn_cmds(math.nan, 0.5, 2.0, MIN_POS_KN + kn_half + math.sin(now) * kn_half, -0.01, math.nan, True)
         await monopod.set_motor_hp_cmds(math.nan, 0.5, 2.0, MIN_POS_HP + hp_half + math.sin(now + 1) * hp_half, -0.01, math.nan, True)
 
-        print(monopod.commands[0])
-        print(monopod.commands[1])
+        #print(monopod.commands[0])
+        #print(monopod.commands[1])
 
 
         # test sending the commands
@@ -184,7 +184,7 @@ async def main():
         #print(now, end='\r')
 
 
-        await asyncio.sleep(0.01)
+        # await asyncio.sleep(0.5)
 
 
 
