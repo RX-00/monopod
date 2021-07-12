@@ -1,0 +1,8 @@
+{
+    "documentId": "3758cd5dea39008a96c66096",
+    "assemblyName": "Main Assembly",
+    "outputFormat": "urdf",
+    //"mergeSTLs": "all",
+    "mergeSTLsCollisions": true,
+    "simplifySTLs": "all"
+}
