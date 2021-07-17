@@ -135,7 +135,7 @@ def rand_goal_animation():
         x = 2.0 * random() - 1.0
         y = 2.0 * random() - 1.0
         theta1, theta2 = two_link_leg_ik(
-            GOAL_TH=0, theta1=theta1, theta2=theta2)
+            GOAL_TH=0.01, theta1=theta1, theta2=theta2)
 
 
 def main():  # pragma: no cover
