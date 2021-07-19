@@ -2,7 +2,6 @@
 
 # Sinusoidal jumping program for the 2D monopod setup
 
-from ctrlrs.ik.sin_ik_hop_ctrlr import sinIkHopCtrlr
 from moteus_ctrlr.src.two_d_leg_class import Leg
 
 import asyncio
@@ -14,10 +13,6 @@ import sys
 
 
 async def main():
-    # create the controller class
-    # NOTE: sin controller: Kp,  dt,   l0,  l1,  animation)
-    ctrlr = sinIkHopCtrlr(25.0, 0.015, 1.0, 1.2, False)
-
     # create the leg class
     monopod = Leg(1, 2)
 
