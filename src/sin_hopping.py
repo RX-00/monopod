@@ -3,7 +3,7 @@
 # Sinusoidal jumping program for the 2D monopod setup
 
 from ctrlrs.ik.sin_ik_hop_ctrlr import sinIkHopCtrlr
-from moteus.src.two_d_leg_class import Leg
+from moteus_ctrlr.src.two_d_leg_class import Leg
 
 import asyncio
 import math
@@ -26,7 +26,7 @@ async def main():
 
     # moving a bit
     while True:
-        now = time.tim()
+        now = time.time()
         vel = 0.2 * math.sin(now)
         vel1 = 0.2 * math.sin(now + 1)
 
