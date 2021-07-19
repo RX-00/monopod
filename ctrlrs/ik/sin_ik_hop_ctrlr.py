@@ -17,11 +17,11 @@ import time
 
 class sinIkHopCtrlr():
 
-    def __init__(self, anim):
-        self.Kp = 25.0
-        self.dt = 0.015
-        self.l0 = 1.0
-        self.l1 = 1.2
+    def __init__(self, Kp=25.0, dt=0.015, l0=1.0, l1=1.2, anim=True):
+        self.Kp = Kp
+        self.dt = dt
+        self.l0 = l0
+        self.l1 = l1
         # state vector for the foot point
         self.q = np.array([[1],  # x
                            [1]]) # y
@@ -118,7 +118,7 @@ class sinIkHopCtrlr():
         return (theta0 - theta1 + np.pi) % (2 * np.pi) - np.pi
 
 
-    def sinusoidal_mv(self):
+    def sinusoidal_mv_anim(self):
         theta0 = theta1 = 0.0
         while True:
             now = time.time()
@@ -127,8 +127,7 @@ class sinIkHopCtrlr():
             theta0, theta1 = self.two_link_leg_ik(
                 des_eps=0.1, theta0=theta0, theta1=theta1)
 
-'''
+
 if __name__ == "__main__":
-    ctrlr = sinIkHopCtrlr(True)
-    ctrlr.sinusoidal_mv()
-'''
+    ctrlr = sinIkHopCtrlr()
+    ctrlr.sinusoidal_mv_anim()
