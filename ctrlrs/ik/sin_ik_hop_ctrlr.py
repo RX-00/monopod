@@ -127,6 +127,14 @@ class sinIkHopCtrlr():
             theta0, theta1 = self.two_link_leg_ik(
                 des_eps=0.1, theta0=theta0, theta1=theta1)
 
+    async def sinusoidal_mv(self, q_0, q_1):
+        theta0 = theta1 = 0.0
+        self.q[0] = q_0
+        self.q[0] = q_1
+        theta, theta1 = self.two_link_leg_ik(
+            des_eps=0.1, theta0=theta0, theta1=theta1)
+        return theta0, theta1
+
 
 if __name__ == "__main__":
     ctrlr = sinIkHopCtrlr()
