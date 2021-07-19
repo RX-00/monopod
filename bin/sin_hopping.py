@@ -3,7 +3,7 @@
 # Sinusoidal jumping program for the 2D monopod setup
 
 from ctrlrs.ik.sin_ik_hop_ctrlr import sinIkHopCtrlr
-from moteus.src import Leg
+from moteus.src.two_d_leg_class import Leg
 
 import asyncio
 import math
