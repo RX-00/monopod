@@ -128,7 +128,7 @@ setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages('monopod/bin') + find_packages('monopod/ctrlrs') + find_packages('monopod/moteus'),  # Required
+    packages=find_packages('monopod/bin') + find_packages('monopod/ctrlrs') + find_packages('monopod/moteus') + find_packages(),  # Required
 
     # Specify which Python versions you support. In contrast to the
     # 'Programming Language' classifiers above, 'pip install' will check this
