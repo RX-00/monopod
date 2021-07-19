@@ -142,8 +142,8 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['moteus',
-                      #'moteus_pi3hat', this is needed on a raspi
+    install_requires=['moteus_pi3hat', # this is needed on a raspi
+                      #'moteus',
                       'matplotlib',
                       'numpy'
                       ],  # Optional
