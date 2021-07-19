@@ -26,19 +26,19 @@ async def main():
 
     # moving a bit
     while True:
+        now = time.tim()
+        vel = 0.2 * math.sin(now)
+        vel1 = 0.2 * math.sin(now + 1)
 
-        
-
-
-        await monopod.set_motor_kn_cmds(math.nan,
-                                        0.5,
-                                        2.0,
-                                        math.nan,
-                                        -0.01,
-                                        math.nan,
-                                        True)
+        await monopod.set_motor_kn_cmds(math.nan, # pos
+                                        vel,      # vel
+                                        2.0,      # max_torque
+                                        math.nan, # stop_pos
+                                        -0.01,    # ffwd_torque
+                                        math.nan, # watchdog_timeout
+                                        True)     # query
         await monopod.set_motor_hp_cmds(math.nan,
-                                        0.5,
+                                        vel1,
                                         2.0,
                                         math.nan,
                                         -0.01,
