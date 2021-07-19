@@ -1,0 +1,5 @@
+# ignore the python venv
+env/
+
+# ignore the python package info
+monopod.egg-info/

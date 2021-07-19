@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 
 # sinusoidal hopping controller based on
-# inverse kinematics set points controlled
-# by a sine wave
+# analytical inverse kinematics set points controlled
+# by a sine wave with a P control loop
 
 #
-# TODO: - Get accurate-ish leg lengths and joint angle limits
-#       - Map encoder ticks to joint angles (radians, maybe make helper fxns for degrees-to-radian conversions)
-#       - Implement try catches for out of bounds joint angles
-#       - Implement behavior for sinusoidal y goal positions over time
+# TODO: - Perhaps implement Ki and Kd gains for more full robust PID control
 #
 
 import matplotlib.pyplot as plt
@@ -20,14 +17,15 @@ import time
 
 class sinIkHopCtrlr():
 
-    def __init__(self):
-        self.Kp = 12.5
-        self.dt = 0.01
-        self.l0 = 1
+    def __init__(self, anim):
+        self.Kp = 25.0
+        self.dt = 0.015
+        self.l0 = 1.0
         self.l1 = 1.2
-        self.q = np.array([[0],
-                           [1]])
-        self.show_animation = True
+        # state vector for the foot point
+        self.q = np.array([[1],  # x
+                           [1]]) # y
+        self.show_animation = anim
         if self.show_animation:
             plt.ion()
 
@@ -110,7 +108,7 @@ class sinIkHopCtrlr():
             plt.ylim(-2, 2)
 
             plt.show()
-            plt.pause(self.dt)
+            plt.pause(self.dt / 1000)
 
         return foot
 
@@ -125,11 +123,12 @@ class sinIkHopCtrlr():
         while True:
             now = time.time()
             self.q[0] = 0.0
-            self.q[1] = 1.0 * np.sin(now) - 2
+            self.q[1] = 1.0 * np.sin(now) - 2.0
             theta0, theta1 = self.two_link_leg_ik(
-                des_eps=0.01, theta0=theta0, theta1=theta1)
+                des_eps=0.1, theta0=theta0, theta1=theta1)
 
-
+'''
 if __name__ == "__main__":
-    ctrlr = sinIkHopCtrlr()
+    ctrlr = sinIkHopCtrlr(True)
     ctrlr.sinusoidal_mv()
+'''

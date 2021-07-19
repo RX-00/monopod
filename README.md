@@ -1,6 +1,12 @@
 # monopod
 WIP 2D monopod
 
+SETUP VENV:
+ 1. If on a new platform w/o monopod/env then: python3 -m venv /path/to/new/virtual/environment
+ 2. don't forget to 'source monopod/env/bin/activate'
+ 3. then in the (env) pip3 install -e monopod
+ 4. don't forget to use setup.py w/ 'pip3 install .'
+
 NOTE:
  - if the knee motor is not working despite no changes in hw and sw then do:
    1. complete power cycle
