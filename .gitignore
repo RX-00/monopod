@@ -3,3 +3,5 @@ env/
 
 # ignore the python package info
 monopod.egg-info/
+
+setup.py

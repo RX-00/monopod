@@ -54,7 +54,7 @@ MIN_POS_HP = -0.51 + 0.00
 
 class Leg:
     # each arg corresponds to the respective servo CANBUS ID
-    async def __init__(self, knee, hip_pitch):
+    def __init__(self, knee, hip_pitch):
         self.knee = knee
         self.hip_pitch = hip_pitch
 
