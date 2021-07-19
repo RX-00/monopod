@@ -18,6 +18,14 @@ async def main():
     # NOTE: sin controller: Kp,  dt,   l0,  l1,  animation)
     ctrlr = sinIkHopCtrlr(25.0, 0.015, 1.0, 1.2, False)
 
+
+    theta_hp = theta_kn = 0
+    # TODO: BUT IN THE LOOP YOU NEED TO CALCULATE THETA0, THETA1 from prior
+    # TODO: need a motor_pos to radian converter!!
+    theta_hp, theta_kn = ctrlr.two_link_leg_ik(des_eps=0.1, theta0=theta_hp, theta1=theta_kn)
+    hp_pos = ctrlr.convert_rad_enc_hp(theta_hp)
+    kn_pos = ctrlr.convert_rad_enc_kn(theta_kn)
+
     # create the leg class
     monopod = Leg(1, 2)
 

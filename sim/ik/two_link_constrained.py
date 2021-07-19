@@ -179,7 +179,9 @@ class sinIkHopCtrlr():
         goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
         return goal_pos
 
+    def convert_enc_kn_rad(self, pos):
 
+    def convert_enc_hp_rad(self, pos):
 
 if __name__ == "__main__":
     ctrlr = sinIkHopCtrlr()
