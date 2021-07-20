@@ -19,6 +19,7 @@ async def main():
     # clearing any faults
     await monopod.stop_all_motors()
 
+    '''
     now = time.time()
     vel = 0.2 * math.sin(now)
     vel1 = 0.2 * math.sin(now + 1)
@@ -39,27 +40,29 @@ async def main():
                                     True)
 
     results = await monopod.send_motor_cmds()
+    '''
 
-    # moving a bit
+    # Reading each servo's position through each moteus controller corresponding
+    # to each servo_id in Leg.servos
     while True:
+        # update the current pos to the closest one which is consistent with an output pos
+        await monopod.servos[monopod.hip_pitch].set_rezero(0.0, query=True)
+        await monopod.servos[monopod.knee].set_rezero(0.0, query=True)
+
+        result_kn = result_hp = None
+        while (result_hp and result_kn) is None:
+            result_hp = await monopod.servos[monopod.hip_pitch].query()
+            result_kn = await monopod.servos[monopod.knee].query()
+
+        print("hip pos: ", result_hp.values[moteus.Register.POSITION])
+        print("knee pos: ", result_kn.values[moteus.Register.POSITION])
+        # NOTE: if stop_all_motors dooesn't work then try this:
+        '''
+        await monopod.servos[monopod.hip_pitch].set_stop()
+        await monopod.servos[monopod.knee].set_stop()
+        '''
         await monopod.stop_all_motors()
 
-        '''
-        print(", ".join(
-            f"({result.id} " +
-            f"{result.values[moteus.Register.POSITION]} " +
-            f"{result.values[moteus.Register.VELOCITY]})"
-            for result in results))
-        '''
-
-        print(", ".join(
-            f"({result.id} " +
-            f"{result.values[moteus.Register.POSITION]} "
-            for result in results))
-
-
-
-        #await asyncio.sleep(1)
 
 
 
