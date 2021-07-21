@@ -64,14 +64,14 @@ async def main():
 
         await monopod.set_motor_kn_cmds(kn_pos, # pos
                                         math.nan, # vel
-                                        0.1,      # max_torque
+                                        0.25,      # max_torque
                                         math.nan, # stop_pos
                                         -0.01,    # ffwd_torque
                                         math.nan, # watchdog_timeout
                                         True)     # query
         await monopod.set_motor_hp_cmds(hp_pos,
                                         math.nan,
-                                        0.1,
+                                        0.25,
                                         math.nan,
                                         -0.01,
                                         math.nan,
@@ -86,7 +86,7 @@ async def main():
             elif result.id == knee:
                 theta_kn = ctrlr.convert_pos_rad_kn(moteus.Register.POSITION)
 
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1)
 
 
 
