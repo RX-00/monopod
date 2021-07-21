@@ -126,6 +126,12 @@ class sinIkHopCtrlr():
             self.q[1] = 1.0 * np.sin(now) - 2.0
             theta0, theta1 = self.two_link_leg_ik(
                 des_eps=0.1, theta0=theta0, theta1=theta1)
+            # print out the motor pos equiv:
+            hp_pos = self.convert_rad_enc_hp(theta0)
+            kn_pos = self.convert_rad_enc_kn(theta1)
+            print("time: ", now)
+            print("hp: ", hp_pos)
+            print("kn: ", kn_pos)
 
     def sinusoidal_mv(self, q_0, q_1):
         theta0 = theta1 = 0.0
@@ -134,6 +140,25 @@ class sinIkHopCtrlr():
         theta, theta1 = self.two_link_leg_ik(
             des_eps=0.1, theta0=theta0, theta1=theta1)
         return theta0, theta1
+
+    def convert_rad_enc_kn(self, theta):
+        # clamp the theta angle b/w the knee motor limits
+        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.15, -0.65])
+        return goal_pos
+
+    def convert_rad_enc_hp(self, theta):
+        # clamp the theta angle b/w the hip motor limits
+        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
+        return goal_pos
+
+    def convert_pos_rad_kn(self, pos):
+        theta = np.interp(pos, [-0.15, -0.65], [-np.pi, np.pi])
+        return theta
+
+    def convert_pos_rad_hp(self, pos):
+        theta = np.interp(pos, [-0.51, 0.02], [-np.pi, np.pi])
+        return theta
+
 
 
 if __name__ == "__main__":

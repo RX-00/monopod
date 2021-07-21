@@ -1,18 +1,26 @@
 #!/usr/bin/env python
 
-# sinusoidal hopping controller based on
-# analytical inverse kinematics set points controlled
-# by a sine wave with a P control loop
+# Inverse Kinematics of a two-link leg constrained to the real leg's limits
+# KNEE: min: -0.65  max: -0.15
+# HIP:  min: -0.51  max: +0.02
+# ^^^ ROTATIONAL
+#
+# USAGE: Left-click the plot to set the
+#      goal (x,y) position of the end
+#      effector (foot)
 
 #
-# TODO: - Perhaps implement Ki and Kd gains for more full robust PID control
+# TODO: - Get accurate-ish leg lengths and joint angle limits
+#       - Map encoder ticks to joint angles (radians, maybe make helper fxns for degrees-to-radian conversions)
+#       - Implement try catches for out of bounds joint angles
+#       - Implement behavior for sinusoidal y goal positions over time
 #
 
 import matplotlib.pyplot as plt
 import numpy as np
 from random import random
-import sys
 import time
+
 
 
 class sinIkHopCtrlr():
@@ -25,6 +33,9 @@ class sinIkHopCtrlr():
         # state vector for the foot point
         self.q = np.array([[1],  # x
                            [1]]) # y
+        self.test_angle_rad = 0
+        self.test_angle_deg = 0
+        self.test_angle_enc = 0
         self.show_animation = anim
         if self.show_animation:
             plt.ion()
@@ -126,6 +137,13 @@ class sinIkHopCtrlr():
             self.q[1] = 1.0 * np.sin(now) - 2.0
             theta0, theta1 = self.two_link_leg_ik(
                 des_eps=0.1, theta0=theta0, theta1=theta1)
+            # print out the motor pos equiv:
+            hp_pos = self.convert_rad_enc_hp(theta0)
+            kn_pos = self.convert_rad_enc_kn(theta1)
+            print("time: ", now)
+            print("hp: ", hp_pos)
+            print("kn: ", kn_pos)
+
 
     def sinusoidal_mv(self, q_0, q_1):
         theta0 = theta1 = 0.0
@@ -135,6 +153,35 @@ class sinIkHopCtrlr():
             des_eps=0.1, theta0=theta0, theta1=theta1)
         return theta0, theta1
 
+
+    def click(self, event):  # pragma: no cover
+        q[0] = event.xdata
+        q[1] = event.ydata
+
+
+    def main_interactive(self):
+        fig = plt.figure()
+        fig.canvas.mpl_connect("button press event", self.click)
+        # for trying to stop the animation w/ the esc key
+        fig.canvas.mpl_connect("key_release_event", lambda event: [
+            exit(0) if event.key == 'escape' else None
+        ])
+        self.two_link_leg_ik()
+
+
+    def convert_rad_enc_kn(self, theta):
+        # clamp the theta angle b/w the knee motor limits
+        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.15, -0.65])
+        return goal_pos
+
+    def convert_rad_enc_hp(self, theta):
+        # clamp the theta angle b/w the hip motor limits
+        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
+        return goal_pos
+
+    def convert_enc_kn_rad(self, pos):
+
+    def convert_enc_hp_rad(self, pos):
 
 if __name__ == "__main__":
     ctrlr = sinIkHopCtrlr()
