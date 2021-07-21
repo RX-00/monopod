@@ -25,7 +25,7 @@ import time
 
 class sinIkHopCtrlr():
 
-    def __init__(self, Kp=25.0, dt=0.015, l0=1.0, l1=1.2, anim=True):
+    def __init__(self, Kp=25.0, dt=0.015, l0=0.1, l1=0.15, anim=True):
         self.Kp = Kp
         self.dt = dt
         self.l0 = l0
@@ -115,8 +115,8 @@ class sinIkHopCtrlr():
             plt.plot([foot[0], target_x], [foot[1], target_y], 'g--')
             plt.plot(target_x, target_y, 'g*')
 
-            plt.xlim(-2, 2)
-            plt.ylim(-2, 2)
+            plt.xlim(-1.5, 1.5)
+            plt.ylim(-1.5, 1.5)
 
             plt.show()
             plt.pause(self.dt / 1000)

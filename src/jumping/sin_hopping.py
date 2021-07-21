@@ -5,6 +5,7 @@
 from ctrlrs.ik.sin_ik_hop_ctrlr import sinIkHopCtrlr
 from moteus_ctrlr.src.two_d_leg_class import Leg
 
+import numpy as np
 import asyncio
 import math
 import moteus
@@ -21,8 +22,10 @@ import sys
 
 async def main():
     # create the controller class
+    # l0 = ~100 mm
+    # l1 = ~150 mm
     # NOTE: sin controller: Kp,  dt,   l0,  l1,  animation)
-    ctrlr = sinIkHopCtrlr(25.0, 0.015, 1.0, 1.2, False)
+    ctrlr = sinIkHopCtrlr(25.0, 0.015, 0.1, 0.15, False)
 
     knee = 1
     hip = 2
@@ -61,14 +64,14 @@ async def main():
 
         await monopod.set_motor_kn_cmds(kn_pos, # pos
                                         math.nan, # vel
-                                        2.0,      # max_torque
+                                        0.1,      # max_torque
                                         math.nan, # stop_pos
                                         -0.01,    # ffwd_torque
                                         math.nan, # watchdog_timeout
                                         True)     # query
         await monopod.set_motor_hp_cmds(hp_pos,
                                         math.nan,
-                                        2.0,
+                                        0.1,
                                         math.nan,
                                         -0.01,
                                         math.nan,
