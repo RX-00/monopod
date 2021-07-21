@@ -17,14 +17,14 @@ import time
 
 class sinIkHopCtrlr():
 
-    def __init__(self, Kp=25.0, dt=0.015, l0=1.0, l1=1.2, anim=True):
+    def __init__(self, Kp=25.0, dt=0.015, l0=0.1, l1=0.15, anim=True):
         self.Kp = Kp
         self.dt = dt
         self.l0 = l0
         self.l1 = l1
         # state vector for the foot point
-        self.q = np.array([[1],  # x
-                           [1]]) # y
+        self.q = np.array([[0.1],  # x
+                           [0.1]]) # y
         self.show_animation = anim
         if self.show_animation:
             plt.ion()

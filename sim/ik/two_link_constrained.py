@@ -31,8 +31,8 @@ class sinIkHopCtrlr():
         self.l0 = l0
         self.l1 = l1
         # state vector for the foot point
-        self.q = np.array([[1],  # x
-                           [1]]) # y
+        self.q = np.array([[0.1],  # x
+                           [0.1]]) # y
         self.test_angle_rad = 0
         self.test_angle_deg = 0
         self.test_angle_enc = 0
@@ -115,8 +115,8 @@ class sinIkHopCtrlr():
             plt.plot([foot[0], target_x], [foot[1], target_y], 'g--')
             plt.plot(target_x, target_y, 'g*')
 
-            plt.xlim(-1.5, 1.5)
-            plt.ylim(-1.5, 1.5)
+            plt.xlim(-0.35, 0.35)
+            plt.ylim(-0.35, 0.35)
 
             plt.show()
             plt.pause(self.dt / 1000)
@@ -130,16 +130,16 @@ class sinIkHopCtrlr():
 
 
     def sinusoidal_mv_anim(self):
-        theta0 = theta1 = 0.0
+        theta_hp = theta_kn = 0.0
         while True:
             now = time.time()
             self.q[0] = 0.0
-            self.q[1] = 1.0 * np.sin(now) - 2.0
-            theta0, theta1 = self.two_link_leg_ik(
-                des_eps=0.1, theta0=theta0, theta1=theta1)
+            self.q[1] = 0.1 * np.sin(now) - 0.22
+            theta_hp, theta_kn = self.two_link_leg_ik(
+                des_eps=0.1, theta0=theta_hp, theta1=theta_kn)
             # print out the motor pos equiv:
-            hp_pos = self.convert_rad_enc_hp(theta0)
-            kn_pos = self.convert_rad_enc_kn(theta1)
+            hp_pos = self.convert_rad_enc_hp(theta_hp)
+            kn_pos = self.convert_rad_enc_kn(theta_kn)
             print("time: ", now)
             print("hp: ", hp_pos)
             print("kn: ", kn_pos)
@@ -174,14 +174,24 @@ class sinIkHopCtrlr():
         goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.15, -0.65])
         return goal_pos
 
+
     def convert_rad_enc_hp(self, theta):
         # clamp the theta angle b/w the hip motor limits
         goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
         return goal_pos
 
-    def convert_enc_kn_rad(self, pos):
 
-    def convert_enc_hp_rad(self, pos):
+    def convert_pos_rad_kn(self, pos):
+        theta = np.interp(pos, [-0.15, -0.65], [-np.pi, np.pi])
+        return theta
+
+
+    def convert_pos_rad_hp(self, pos):
+        theta = np.interp(pos, [-0.51, 0.02], [-np.pi, np.pi])
+        return theta
+
+
+
 
 if __name__ == "__main__":
     ctrlr = sinIkHopCtrlr()

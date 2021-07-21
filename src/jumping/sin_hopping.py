@@ -52,7 +52,7 @@ async def main():
 
         # desired pos:
         ctrlr.q[0] = 0.0
-        ctrlr.q[1] = 1.0 * np.sin(now) - 2.0
+        ctrlr.q[1] = 0.1 * np.sin(now) - 0.22
         # NOTE TODO: if these desired positions don't work out
         #            make it so you create a square wave instead
         #wave = np.sin(now / 1.0)
