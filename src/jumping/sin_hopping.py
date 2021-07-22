@@ -26,11 +26,12 @@ async def main():
     # l1 = ~150 mm
     # NOTE: sin controller: Kp,  dt,   l0,  l1,  animation)
     ctrlr = sinIkHopCtrlr(25.0, 0.015, 0.1, 0.15, False)
+    ctrlr_x = ctrlr_y = 0
 
     kn_id = 1
     hp_id = 2
     theta_hp = theta_kn = 0
-    wave = 0
+    wave = 1.0
 
     # create the leg class
     monopod = Leg(kn_id, hp_id) # NOTE: knee = 1, hip = 2
@@ -40,22 +41,26 @@ async def main():
 
     # moving a bit
     while True:
-        now = time.time()
 
-        #if (wave > 0):
-        #    ctrlr.q[0] = 0.0
-        #    ctrlr.q[1] = 0.0
-        #elif (wave < 0):
-        #    ctrlr.q[0] = 0.0
-        #    ctrlr.q[1] = 0.0
-
-
-        # desired pos:
-        ctrlr.q[0] = 0.0
-        ctrlr.q[1] = 0.1 * np.sin(now) - 0.22
         # NOTE TODO: if these desired positions don't work out
         #            make it so you create a square wave instead
+        now = time.time()
         #wave = np.sin(now / 1.0)
+
+        # desired pos sq sine wave:
+        if (wave & 2 > 0): # crouch
+            print("crouching")
+            ctrlr.q[0] = 0.079
+            ctrlr.q[1] = -0.164
+        else:              # extend
+            print("extending")
+            ctrlr.q[0] = 
+            ctrlr.q[1] = 
+
+        # desired pos sine wave:
+        #ctrlr.q[0] = 0.0
+        #ctrlr.q[1] = 0.1 * np.sin(now) - 0.22
+
 
         theta_hp, theta_kn = ctrlr.two_link_leg_ik(
             des_eps=0.1, theta0=theta_hp, theta1=theta_kn)
@@ -82,10 +87,11 @@ async def main():
         # update the position readings to feedback into the ik ctrlr
         for result in results:
             if result.id == hp_id:
-                theta_hp = ctrlr.convert_pos_rad_hp(moteus.Register.POSITION)
+                theta_hp = ctrlr.convert_enc_rad_hp(moteus.Register.POSITION)
             elif result.id == kn_id:
-                theta_kn = ctrlr.convert_pos_rad_kn(moteus.Register.POSITION)
+                theta_kn = ctrlr.convert_enc_rad_kn(moteus.Register.POSITION)
 
+        wave = wave + 1
         await asyncio.sleep(1)
 
 
