@@ -1,8 +1,9 @@
 #!/usr/bin/python3 -B
 
-# Sinusoidal jumping program for the 2D monopod setup
+# Programming for passively reading the joint angles on the monopod
 
 from moteus_ctrlr.src.two_d_leg_class import Leg
+from ctrlrs.ik.sin_ik_hop_ctrlr import sinIkHopCtrlr
 
 import asyncio
 import math
@@ -13,34 +14,21 @@ import sys
 
 
 async def main():
+    kn_id = 1
+    hp_id = 2
+    ctrlr_x = ctrlr_y = 0
+
     # create the leg class
-    monopod = Leg(1, 2)
+    monopod = Leg(kn_id, hp_id) # TODO: double check the motor port id's
+
+    # create controller class
+    # l0 = ~100 mm
+    # l1 = ~150 mm
+    # NOTE: sin controller: Kp,  dt,   l0,  l1,  animation)
+    ctrlr = sinIkHopCtrlr(25.0, 0.015, 0.1, 0.15, False)
 
     # clearing any faults
     await monopod.stop_all_motors()
-
-    '''
-    now = time.time()
-    vel = 0.2 * math.sin(now)
-    vel1 = 0.2 * math.sin(now + 1)
-
-    await monopod.set_motor_kn_cmds(math.nan, # pos
-                                    vel,      # vel
-                                    2.0,      # max_torque
-                                    math.nan, # stop_pos
-                                    -0.01,    # ffwd_torque
-                                    math.nan, # watchdog_timeout
-                                    True)     # query
-    await monopod.set_motor_hp_cmds(math.nan,
-                                    vel1,
-                                    2.0,
-                                    math.nan,
-                                    -0.01,
-                                    math.nan,
-                                    True)
-
-    results = await monopod.send_motor_cmds()
-    '''
 
     # Reading each servo's position through each moteus controller corresponding
     # to each servo_id in Leg.servos
@@ -54,13 +42,22 @@ async def main():
             result_hp = await monopod.servos[monopod.hip_pitch].query()
             result_kn = await monopod.servos[monopod.knee].query()
 
-        print("hip pos: ", result_hp.values[moteus.Register.POSITION])
-        print("knee pos: ", result_kn.values[moteus.Register.POSITION])
-        # NOTE: if stop_all_motors dooesn't work then try this:
-        '''
-        await monopod.servos[monopod.hip_pitch].set_stop()
-        await monopod.servos[monopod.knee].set_stop()
-        '''
+        # now we have all the info about the actual monopod's joint positions,
+        # so now we must convert & feedback that info to the ctrlr
+        ctrlr.theta0 = ctrlr.convert_enc_rad_hp(result_hp.values[moteus.Register.POSITION])
+        ctrlr.theta1 = ctrlr.convert_enc_rad_kn(result_kn.values[moteus.Register.POSITION])
+        ctrlr_x, ctrlr_y = ctrlr.fwrd_kinematics()
+
+
+        #print("hip pos: ", result_hp.values[moteus.Register.POSITION])
+        #print("knee pos: ", result_kn.values[moteus.Register.POSITION])
+
+        print("theta0: ", np.degrees(ctrlr.theta0.degrees()))
+        print("theta1: ", np.degrees(ctrlr.theta1.degrees()))
+        print("q[0]: ", ctrlr_x)
+        print("q[1]: ", ctrlr_y)
+        print("---------------------------------------------------------")
+
         await monopod.stop_all_motors()
 
 

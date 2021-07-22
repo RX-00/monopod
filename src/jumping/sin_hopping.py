@@ -27,13 +27,13 @@ async def main():
     # NOTE: sin controller: Kp,  dt,   l0,  l1,  animation)
     ctrlr = sinIkHopCtrlr(25.0, 0.015, 0.1, 0.15, False)
 
-    knee = 1
-    hip = 2
+    kn_id = 1
+    hp_id = 2
     theta_hp = theta_kn = 0
     wave = 0
 
     # create the leg class
-    monopod = Leg(knee, hip) # NOTE: knee = 1, hip = 2
+    monopod = Leg(kn_id, hp_id) # NOTE: knee = 1, hip = 2
 
     # clearing any faults
     await monopod.stop_all_motors()
@@ -81,9 +81,9 @@ async def main():
 
         # update the position readings to feedback into the ik ctrlr
         for result in results:
-            if result.id == hip:
+            if result.id == hp_id:
                 theta_hp = ctrlr.convert_pos_rad_hp(moteus.Register.POSITION)
-            elif result.id == knee:
+            elif result.id == kn_id:
                 theta_kn = ctrlr.convert_pos_rad_kn(moteus.Register.POSITION)
 
         await asyncio.sleep(1)

@@ -169,26 +169,30 @@ class sinIkHopCtrlr():
         self.two_link_leg_ik()
 
 
+    # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_rad_enc_kn(self, theta):
         # clamp the theta angle b/w the knee motor limits
-        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.15, -0.65])
+        goal_pos = np.interp(theta,[0.0, np.pi/2.0], [-0.15, -0.65])
         return goal_pos
-
 
     def convert_rad_enc_hp(self, theta):
         # clamp the theta angle b/w the hip motor limits
         goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
         return goal_pos
 
-
-    def convert_pos_rad_kn(self, pos):
-        theta = np.interp(pos, [-0.15, -0.65], [-np.pi, np.pi])
+    # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
+    def convert_enc_rad_kn(self, pos):
+        theta = np.interp(pos, [-0.15, -0.65], [0.0, np.pi/2.0])
         return theta
 
-
-    def convert_pos_rad_hp(self, pos):
+    def convert_enc_rad_hp(self, pos):
         theta = np.interp(pos, [-0.51, 0.02], [-np.pi, np.pi])
         return theta
+
+    def fwrd_kinematics(self):
+        x = self.l0 * np.cos(self.theta0) + self.l1 * np.cos(self.theta0 + self.theta1)
+        y = self.l0 * np.sin(self.theta0) + self.l1 * np.sin(self.theta0 + self.theta1)
+        return x, y
 
 
 
