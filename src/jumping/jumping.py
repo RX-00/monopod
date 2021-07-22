@@ -36,6 +36,9 @@ servos = {
 
 async def main():
 
+    # clearing any faults
+    await transport.cycle([x.make_stop() for x in servos.values()])
+
 
 
 
