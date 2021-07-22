@@ -31,7 +31,7 @@ async def main():
     kn_id = 1
     hp_id = 2
     theta_hp = theta_kn = 0
-    wave = 1.0
+    wave = 1
 
     # create the leg class
     monopod = Leg(kn_id, hp_id) # NOTE: knee = 1, hip = 2
@@ -50,12 +50,12 @@ async def main():
         # desired pos sq sine wave:
         if (wave & 2 > 0): # crouch
             print("crouching")
-            ctrlr.q[0] = 0.079
-            ctrlr.q[1] = -0.164
+            ctrlr.q[0] = 0.044
+            ctrlr.q[1] =-0.164
         else:              # extend
             print("extending")
-            ctrlr.q[0] = 
-            ctrlr.q[1] = 
+            ctrlr.q[0] =-0.039
+            ctrlr.q[1] = 0.041
 
         # desired pos sine wave:
         #ctrlr.q[0] = 0.0
@@ -66,17 +66,25 @@ async def main():
             des_eps=0.1, theta0=theta_hp, theta1=theta_kn)
         hp_pos = ctrlr.convert_rad_enc_hp(theta_hp)
         kn_pos = ctrlr.convert_rad_enc_kn(theta_kn)
+        ctrlr_x, ctrlr_y = ctrlr.fwrd_kinematics(theta_hp, theta_kn)
+
+        '''print("sim x: ", ctrlr.q[0])
+        print("irl x: ", ctrlr_x)
+        print("sim y: ", ctrlr.q[1])
+        print("irl y: ", ctrlr_y)'''
+
+        print("cmd pos: ", kn_pos)
 
         await monopod.set_motor_kn_cmds(kn_pos, # pos
                                         math.nan, # vel
-                                        0.25,      # max_torque
+                                        0.5,      # max_torque
                                         math.nan, # stop_pos
                                         -0.01,    # ffwd_torque
                                         math.nan, # watchdog_timeout
                                         True)     # query
         await monopod.set_motor_hp_cmds(hp_pos,
                                         math.nan,
-                                        0.25,
+                                        0.5,
                                         math.nan,
                                         -0.01,
                                         math.nan,
@@ -92,7 +100,8 @@ async def main():
                 theta_kn = ctrlr.convert_enc_rad_kn(moteus.Register.POSITION)
 
         wave = wave + 1
-        await asyncio.sleep(1)
+        #print("now to wait for 5 seconds")
+        await asyncio.sleep(5)
 
 
 

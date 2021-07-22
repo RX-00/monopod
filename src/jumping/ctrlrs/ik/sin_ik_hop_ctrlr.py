@@ -25,6 +25,7 @@ class sinIkHopCtrlr():
         # state vector for the foot point
         self.q = np.array([[0.1],  # x
                            [0.1]]) # y
+        self.theta0 = self.theta1 = 0.0
         self.show_animation = anim
         if self.show_animation:
             plt.ion()
@@ -82,6 +83,8 @@ class sinIkHopCtrlr():
                 dist_to_des = np.hypot(foot[0] - float(self.q[0]), foot[1] - float(self.q[1]))
 
             if abs(dist_to_des) < des_eps and float(self.q[0]) is not None:
+                self.theta0 = theta0
+                self.theta1 = theta1
                 return theta0, theta1
 
 
@@ -174,9 +177,9 @@ class sinIkHopCtrlr():
         theta = self.lin_conv(pos, -0.48, 0.4, -np.pi, np.pi)
         return theta
 
-    def fwrd_kinematics(self):
-        x = self.l0 * np.cos(self.theta0) + self.l1 * np.cos(self.theta0 + self.theta1)
-        y = self.l0 * np.sin(self.theta0) + self.l1 * np.sin(self.theta0 + self.theta1)
+    def fwrd_kinematics(self, theta0, theta1):
+        x = self.l0 * np.cos(theta0) + self.l1 * np.cos(theta0 + theta1)
+        y = self.l0 * np.sin(theta0) + self.l1 * np.sin(theta0 + theta1)
         return x, y
 
 
