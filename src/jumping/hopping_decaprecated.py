@@ -17,7 +17,6 @@ import sys
 
 # TODO: check out and if needed tune/change the motor's internal PID
 #       in order to increase damping!
-# TODO: setup the links and coordinates to be in meters
 
 
 async def main():
