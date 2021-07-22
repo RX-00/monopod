@@ -129,18 +129,29 @@ class sinIkHopCtrlr():
         return (theta0 - theta1 + np.pi) % (2 * np.pi) - np.pi
 
 
+    def lin_conv(self, old_val, old_min, old_max, new_min, new_max):
+        old_rng = old_max - old_min
+        if (old_rng == 0):
+            new_val = new_min
+        else:
+            new_rng = (new_max - new_min)
+            new_val = (((old_val - old_min) * new_rng) / old_rng) + new_min
+        return new_val
+
+
     def sinusoidal_mv_anim(self):
         theta_hp = theta_kn = 0.0
         while True:
             now = time.time()
             self.q[0] = 0.0
+            #self.q[1] = -0.25
             self.q[1] = 0.1 * np.sin(now) - 0.22
             theta_hp, theta_kn = self.two_link_leg_ik(
                 des_eps=0.1, theta0=theta_hp, theta1=theta_kn)
             # print out the motor pos equiv:
             hp_pos = self.convert_rad_enc_hp(theta_hp)
             kn_pos = self.convert_rad_enc_kn(theta_kn)
-            print("time: ", now)
+            #print("time: ", now)
             print("hp: ", hp_pos)
             print("kn: ", kn_pos)
 
@@ -171,22 +182,24 @@ class sinIkHopCtrlr():
 
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_rad_enc_kn(self, theta):
-        # clamp the theta angle b/w the knee motor limits
-        goal_pos = np.interp(theta,[0.0, np.pi/2.0], [-0.15, -0.65])
+        # linear conversion from theta angle to the knee motor limits
+        goal_pos = -self.lin_conv(theta, np.pi/2.0, 0.0, -0.2, 0.38)
         return goal_pos
 
     def convert_rad_enc_hp(self, theta):
-        # clamp the theta angle b/w the hip motor limits
-        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
+        # linear conversion from theta angle to the knee motor limits
+        goal_pos = self.lin_conv(theta, -np.pi, np.pi, -0.48, 0.4)
         return goal_pos
 
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_enc_rad_kn(self, pos):
-        theta = np.interp(pos, [-0.15, -0.65], [0.0, np.pi/2.0])
+        # linear conversion from knee motor limits to theta angle
+        theta = -self.lin_conv(pos, -0.2, 0.38, np.pi/2.0, 0.0)
         return theta
 
     def convert_enc_rad_hp(self, pos):
-        theta = np.interp(pos, [-0.51, 0.02], [-np.pi, np.pi])
+        # linear conversion from knee motor limits to theta angle
+        theta = self.lin_conv(pos, -0.48, 0.4, -np.pi, np.pi)
         return theta
 
     def fwrd_kinematics(self):
