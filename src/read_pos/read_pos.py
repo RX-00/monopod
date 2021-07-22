@@ -49,14 +49,14 @@ async def main():
         ctrlr_x, ctrlr_y = ctrlr.fwrd_kinematics()
 
 
-        #print("hip pos: ", result_hp.values[moteus.Register.POSITION])
-        #print("knee pos: ", result_kn.values[moteus.Register.POSITION])
+        print("hip pos: ", result_hp.values[moteus.Register.POSITION])
+        print("knee pos: ", result_kn.values[moteus.Register.POSITION])
 
-        print("theta0: ", np.degrees(ctrlr.theta0.degrees()))
-        print("theta1: ", np.degrees(ctrlr.theta1.degrees()))
-        print("q[0]: ", ctrlr_x)
-        print("q[1]: ", ctrlr_y)
-        print("---------------------------------------------------------")
+        #print("theta0: ", np.degrees(ctrlr.theta0.degrees()))
+        #print("theta1: ", np.degrees(ctrlr.theta1.degrees()))
+        #print("q[0]: ", ctrlr_x)
+        #print("q[1]: ", ctrlr_y)
+        #print("---------------------------------------------------------")
 
         await monopod.stop_all_motors()
 
