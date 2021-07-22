@@ -5,6 +5,7 @@
 from moteus_ctrlr.src.two_d_leg_class import Leg
 from ctrlrs.ik.sin_ik_hop_ctrlr import sinIkHopCtrlr
 
+import numpy as np
 import asyncio
 import math
 import moteus
@@ -49,14 +50,16 @@ async def main():
         ctrlr_x, ctrlr_y = ctrlr.fwrd_kinematics()
 
 
-        print("hip pos: ", result_hp.values[moteus.Register.POSITION])
-        print("knee pos: ", result_kn.values[moteus.Register.POSITION])
+        print("hp pos: ", result_hp.values[moteus.Register.POSITION])
+        print("kn pos: ", result_kn.values[moteus.Register.POSITION])
+        print("fk hp pos: ", ctrlr.convert_rad_enc_hp(ctrlr.theta0))
+        print("fk kn pos: ", ctrlr.convert_rad_enc_kn(ctrlr.theta1))
 
-        #print("theta0: ", np.degrees(ctrlr.theta0.degrees()))
-        #print("theta1: ", np.degrees(ctrlr.theta1.degrees()))
+        #print("theta0: ", np.degrees(ctrlr.theta0))
+        #print("theta1: ", np.degrees(ctrlr.theta1))
         #print("q[0]: ", ctrlr_x)
         #print("q[1]: ", ctrlr_y)
-        #print("---------------------------------------------------------")
+        print("---------------------------------------------------------")
 
         await monopod.stop_all_motors()
 

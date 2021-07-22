@@ -118,6 +118,16 @@ class sinIkHopCtrlr():
         return (theta0 - theta1 + np.pi) % (2 * np.pi) - np.pi
 
 
+    def lin_conv(self, old_val, old_min, old_max, new_min, new_max):
+        old_rng = old_max - old_min
+        if (old_rng == 0):
+            new_val = new_min
+        else:
+            new_rng = (new_max - new_min)
+            new_val = (((old_val - old_min) * new_rng) / old_rng) + new_min
+        return new_val
+
+
     def sinusoidal_mv_anim(self):
         theta0 = theta1 = 0.0
         while True:
@@ -141,24 +151,29 @@ class sinIkHopCtrlr():
             des_eps=0.1, theta0=theta0, theta1=theta1)
         return theta0, theta1
 
+
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
+    # NOTE: knee stuff is negative since the belt gearing
     def convert_rad_enc_kn(self, theta):
-        # clamp the theta angle b/w the knee motor limits
-        goal_pos = np.interp(theta,[0.0, np.pi/2.0], [-0.15, -0.65])
+        # linear conversion from theta angle to the knee motor limits
+        #goal_pos = -self.lin_conv(theta, np.pi/2.0, 0.0, -0.2, 0.38)
+        goal_pos = self.lin_conv(theta, np.pi/2.0, 0.0, -0.2, 0.38)
         return goal_pos
 
     def convert_rad_enc_hp(self, theta):
-        # clamp the theta angle b/w the hip motor limits
-        goal_pos = np.interp(theta,[-np.pi, np.pi], [-0.51, 0.02])
+        # linear conversion from theta angle to the knee motor limits
+        goal_pos = self.lin_conv(theta, -np.pi, np.pi, -0.48, 0.4)
         return goal_pos
 
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_enc_rad_kn(self, pos):
-        theta = np.interp(pos, [-0.15, -0.65], [0.0, np.pi/2.0])
+        # linear conversion from knee motor limits to theta angle
+        #theta = -self.lin_conv(pos, -0.2, 0.38, np.pi/2.0, 0.0)
         return theta
 
     def convert_enc_rad_hp(self, pos):
-        theta = np.interp(pos, [-0.51, 0.02], [-np.pi, np.pi])
+        # linear conversion from knee motor limits to theta angle
+        theta = self.lin_conv(pos, -0.48, 0.4, -np.pi, np.pi)
         return theta
 
     def fwrd_kinematics(self):

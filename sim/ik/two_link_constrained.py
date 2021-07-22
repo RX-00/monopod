@@ -181,6 +181,7 @@ class sinIkHopCtrlr():
 
 
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
+    # NOTE: knee stuff is negative since the belt gearing
     def convert_rad_enc_kn(self, theta):
         # linear conversion from theta angle to the knee motor limits
         goal_pos = -self.lin_conv(theta, np.pi/2.0, 0.0, -0.2, 0.38)
