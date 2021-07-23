@@ -50,8 +50,8 @@ async def main():
         ctrlr_x, ctrlr_y = ctrlr.fwrd_kinematics()
 
 
-        #print("hp pos: ", result_hp.values[moteus.Register.POSITION])
-        #print("kn pos: ", result_kn.values[moteus.Register.POSITION])
+        print("hp pos: ", result_hp.values[moteus.Register.POSITION])
+        print("kn pos: ", result_kn.values[moteus.Register.POSITION])
         #print("fk hp pos: ", ctrlr.convert_rad_enc_hp(ctrlr.theta0))
         #print("fk kn pos: ", ctrlr.convert_rad_enc_kn(ctrlr.theta1))
 
