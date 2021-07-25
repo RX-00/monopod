@@ -163,7 +163,7 @@ async def main_bare():
             hip_pos = -0.065
         elif (wave < 0):
             # extend
-            knee_pos = 0.387
+            knee_pos = -0.49
             hip_pos = -0.244
 
         # irl position commands

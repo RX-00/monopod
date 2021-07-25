@@ -2,6 +2,7 @@
 
 # test script to individually test the knee motor
 
+import numpy as np
 import asyncio
 import math
 import moteus
@@ -27,6 +28,7 @@ commands = []
 async def main_bare():
     # clearing any faults
     await transport.cycle([x.make_stop() for x in servos.values()])
+    await asyncio.sleep(3)
 
     while True:
         now = time.time()
@@ -44,16 +46,16 @@ async def main_bare():
         # irl position commands
         commands = [
             servos[1].make_position( # KNEE
-                position = math.nan,
-                velocity = 2.0,
+                position = 0.1 * np.sin(now),
+                velocity = math.nan,
                 maximum_torque = 0.5,
                 stop_position = math.nan,
                 feedforward_torque = -0.01,
                 watchdog_timeout = math.nan,
                 query = True),
             servos[2].make_position( # HIP
-                position = hip_pos,
-                velocity = 2.0,
+                position = math.nan,
+                velocity = math.nan,
                 maximum_torque = 0.5,
                 stop_position = math.nan,
                 feedforward_torque = -0.01,
@@ -69,7 +71,7 @@ async def main_bare():
         # We will wait 20ms between cycles. By default, each servo has
         # a watchdog timeout, where if no CAN command is received for
         # 100mc the controller will enter a latched fault state
-        await asyncio.sleep(0.02)
+        await asyncio.sleep(2)
 
 
 if __name__ == "__main__":
