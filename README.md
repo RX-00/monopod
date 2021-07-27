@@ -12,6 +12,7 @@ NOTE:
    1. complete power cycle
    2. run the move knee script
    3. retry
+ - velocity command should be 0.0 if not specified, NOT math.nan!!
 
 TODO:
 - test out lcm py and cpp

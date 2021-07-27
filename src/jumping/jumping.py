@@ -95,7 +95,7 @@ async def main():
         commands_irl = [
             servos[1].make_position( # KNEE
                 position = ctrlr.convert_rad_enc_kn(kn_pos),
-                velocity = math.nan,
+                velocity = 0.0,
                 maximum_torque = 1.0,
                 stop_position = math.nan,
                 feedforward_torque = -0.01,
@@ -103,7 +103,7 @@ async def main():
                 query = True),
             servos[2].make_position( # HIP
                 position = hip_pos,
-                velocity = math.nan,
+                velocity = 0.0,
                 maximum_torque = 1.0,
                 stop_position = math.nan,
                 feedforward_torque = -0.01,
