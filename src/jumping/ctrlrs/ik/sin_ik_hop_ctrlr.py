@@ -158,22 +158,22 @@ class sinIkHopCtrlr():
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_rad_enc_kn(self, theta):
         # linear conversion from theta angle to the knee motor limits
-        goal_pos = self.lin_conv(theta, -np.pi/2.0, np.pi/2.0, -0.18, 0.18)
+        goal_pos = self.lin_conv(theta, -np.pi/2.0, np.pi/2.0, -0.5, 0.4)
         return goal_pos
 
     def convert_rad_enc_hp(self, theta):
-        # linear conversion from theta angle to the knee motor limits
+        # linear conversion from theta angle to the hip motor limits
         goal_pos = self.lin_conv(theta, -np.pi, np.pi, -0.48, 0.4)
         return goal_pos
 
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_enc_rad_kn(self, pos):
         # linear conversion from knee motor limits to theta angle
-        theta = self.lin_conv(pos, -0.18, 0.18, -np.pi/2.0, np.pi/2.0)
+        theta = self.lin_conv(pos, -0.5, 0.4, -np.pi/2.0, np.pi/2.0)
         return theta
 
     def convert_enc_rad_hp(self, pos):
-        # linear conversion from knee motor limits to theta angle
+        # linear conversion from hip motor limits to theta angle
         theta = self.lin_conv(pos, -0.48, 0.4, -np.pi, np.pi)
         return theta
 

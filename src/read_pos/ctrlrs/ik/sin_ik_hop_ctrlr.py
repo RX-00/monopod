@@ -25,6 +25,7 @@ class sinIkHopCtrlr():
         # state vector for the foot point
         self.q = np.array([[0.1],  # x
                            [0.1]]) # y
+        self.theta0 = self.theta1 = 0.0
         self.show_animation = anim
         if self.show_animation:
             plt.ion()
@@ -82,6 +83,8 @@ class sinIkHopCtrlr():
                 dist_to_des = np.hypot(foot[0] - float(self.q[0]), foot[1] - float(self.q[1]))
 
             if abs(dist_to_des) < des_eps and float(self.q[0]) is not None:
+                self.theta0 = theta0
+                self.theta1 = theta1
                 return theta0, theta1
 
 
@@ -155,28 +158,28 @@ class sinIkHopCtrlr():
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_rad_enc_kn(self, theta):
         # linear conversion from theta angle to the knee motor limits
-        goal_pos = self.lin_conv(theta, -np.pi/2.0, np.pi/2.0, -0.18, 0.18)
+        goal_pos = self.lin_conv(theta, -np.pi/2.0, np.pi/2.0, -0.5, 0.4)
         return goal_pos
 
     def convert_rad_enc_hp(self, theta):
-        # linear conversion from theta angle to the knee motor limits
+        # linear conversion from theta angle to the hip motor limits
         goal_pos = self.lin_conv(theta, -np.pi, np.pi, -0.48, 0.4)
         return goal_pos
 
     # NOTE: MAKE SURE THE RANGE OF RADIANS IS APPROX TO IRL RANGE OF KNEE JOINT
     def convert_enc_rad_kn(self, pos):
         # linear conversion from knee motor limits to theta angle
-        theta = self.lin_conv(pos, -0.18, 0.18, -np.pi/2.0, np.pi/2.0)
+        theta = self.lin_conv(pos, -0.5, 0.4, -np.pi/2.0, np.pi/2.0)
         return theta
 
     def convert_enc_rad_hp(self, pos):
-        # linear conversion from knee motor limits to theta angle
+        # linear conversion from hip motor limits to theta angle
         theta = self.lin_conv(pos, -0.48, 0.4, -np.pi, np.pi)
         return theta
 
-    def fwrd_kinematics(self):
-        x = self.l0 * np.cos(self.theta0) + self.l1 * np.cos(self.theta0 + self.theta1)
-        y = self.l0 * np.sin(self.theta0) + self.l1 * np.sin(self.theta0 + self.theta1)
+    def fwrd_kinematics(self, theta0, theta1):
+        x = self.l0 * np.cos(theta0) + self.l1 * np.cos(theta0 + theta1)
+        y = self.l0 * np.sin(theta0) + self.l1 * np.sin(theta0 + theta1)
         return x, y
 
 
